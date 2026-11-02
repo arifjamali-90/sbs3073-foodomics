@@ -1,0 +1,464 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}.task{margin-top:18px;background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--amber);border-radius:10px;padding:18px 20px;display:grid;gap:10px;overflow-x:auto}.task .tag{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--amber)}.task p{margin:0}.task table{border-collapse:collapse;width:100%;font-size:15px;font-variant-numeric:tabular-nums}.task th,.task td{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left}.task th{color:var(--muted);font-weight:700}.task .seqrow{display:grid;grid-template-columns:44px minmax(0,1fr);gap:8px;align-items:center}.task code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:14px;letter-spacing:.06em;word-break:break-all;background:var(--bg);padding:6px 8px;border-radius:6px}</style>
+<title>SBS3073 Foodomics Lecture</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&family=Source+Sans+3:wght@400;600;700&display=swap">
+<style>
+/* Layout: lecture player on the left, chapter rail on the right; stacks to one column on phones */
+:root {
+  --bg: #f4f7f8; --surface: #ffffff; --ink: #0b2545; --muted: #5b6b7f; --line: #d6dee6;
+  --teal: #13807a; --teal-soft: #e3f2f0; --amber: #b8661a; --amber-soft: #fbefe2; --good: #2e7d4f; --good-soft: #e8f4ec; --bad: #b03a2e; --bad-soft: #f9e9e7;
+  --stage: #0b2545;
+  --f-display: "Source Serif 4", Cambria, Georgia, serif;
+  --f-body: "Source Sans 3", Calibri, "Segoe UI", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0c1622; --surface: #142233; --ink: #e8eef4; --muted: #9fb0c3; --line: #2a3b50;
+  --teal: #4fc1b8; --teal-soft: #15343a; --amber: #f0a65a; --amber-soft: #3a2a18; --good: #6fcf97; --good-soft: #163325; --bad: #f08a7e; --bad-soft: #3a1d1a; --stage: #06101b; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #0c1622; --surface: #142233; --ink: #e8eef4; --muted: #9fb0c3; --line: #2a3b50;
+  --teal: #4fc1b8; --teal-soft: #15343a; --amber: #f0a65a; --amber-soft: #3a2a18; --good: #6fcf97; --good-soft: #163325; --bad: #f08a7e; --bad-soft: #3a1d1a; --stage: #06101b; color-scheme: dark }
+* { box-sizing: border-box }
+[hidden] { display: none !important }
+body { background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 16px; line-height: 1.55 }
+.wrap { max-width: 1240px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 28px 48px }
+header { display: grid; gap: 6px; margin-bottom: 22px }
+.eyebrow { font-size: 13px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--teal) }
+h1 { font-family: var(--f-display); font-weight: 700; font-size: clamp(28px, 4vw, 40px); line-height: 1.15; margin: 0; text-wrap: balance }
+.lede { margin: 4px 0 0; color: var(--muted); max-width: 68ch }
+.pilot { display: inline-flex; gap: 8px; align-items: center; margin-top: 10px; padding: 6px 12px; border-radius: 999px; background: var(--amber-soft); color: var(--amber); font-weight: 600; font-size: 14px; width: fit-content }
+.grid { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 24px; align-items: start }
+@media (max-width: 900px) { .grid { grid-template-columns: minmax(0, 1fr) } }
+.stage { position: relative; background: var(--stage); border-radius: 10px; overflow: hidden; aspect-ratio: 16 / 9; max-width: 100% }
+.stage video { width: 100%; height: 100%; display: block; background: var(--stage) }
+.locked-stage { position: absolute; inset: 0; display: grid; place-content: center; text-align: center; color: #cfe1ef; padding: 24px; gap: 6px }
+.locked-stage strong { font-family: var(--f-display); font-size: 22px; color: #fff }
+.cc { position: absolute; left: 4%; right: 4%; bottom: 3.2%; text-align: center; pointer-events: none }
+.cc span { display: inline; background: rgba(0, 0, 0, .78); color: #fff; font-size: clamp(13px, 1.9vw, 21px); line-height: 1.45; padding: 2px 8px; border-radius: 4px; box-decoration-break: clone; -webkit-box-decoration-break: clone }
+.skip-note { position: absolute; top: 12px; left: 50%; transform: translateX(-50%); max-width: 90%; background: rgba(11, 37, 69, .92); color: #fff; font-weight: 600; font-size: 15px; padding: 8px 14px; border-radius: 8px; text-align: center }
+.who { font-size: 14px; color: var(--muted); margin-top: 8px }
+.linkish { background: none; color: var(--teal); padding: 0; font-weight: 600; text-decoration: underline; border-radius: 0 }
+.linkish.danger { color: var(--bad) }
+.reg { max-width: 520px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 22px 24px; margin-bottom: 24px }
+.reg h2 { font-family: var(--f-display); margin: 0 0 6px; font-size: 24px }
+.reg p { margin: 0 0 14px; color: var(--muted) }
+.reg form { display: grid; gap: 8px }
+.reg label { font-weight: 600; font-size: 15px }
+.reg input { font: inherit; padding: 10px 12px; border-radius: 8px; border: 1.5px solid var(--line); background: var(--bg); color: var(--ink) }
+.reg button[type=submit] { justify-self: start; margin-top: 8px }
+.reg .err { color: var(--bad); margin: 0; font-weight: 600 }
+.reg .small { font-size: 14px; margin: 14px 0 0 }
+.slip { margin-top: 18px; border: 2px solid var(--teal); border-radius: 12px; background: var(--surface); padding: 22px 24px; display: grid; gap: 14px }
+.slip h3 { margin: 0; font-family: var(--f-display); font-size: 22px }
+.slip .course { font-size: 13px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--teal) }
+.slip dl { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 6px 18px; margin: 0; font-variant-numeric: tabular-nums }
+.slip dt { color: var(--muted) }
+.slip dd { margin: 0; font-weight: 600 }
+.slip .code { font-family: ui-monospace, "SFMono-Regular", Menlo, monospace; font-size: 22px; letter-spacing: .08em; color: var(--teal) }
+.slip .how { background: var(--teal-soft); border-radius: 8px; padding: 10px 14px; font-size: 15px }
+.cc-toggle { font-size: 14px; padding: 6px 12px }
+.pause-card { position: absolute; inset: auto 0 0 0; background: rgba(184, 102, 26, .96); color: #fff; padding: 18px 22px; display: grid; gap: 10px }
+.pause-card .lbl { font-size: 13px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; opacity: .9 }
+.pause-card p { margin: 0; font-size: clamp(17px, 2.2vw, 22px); font-weight: 600; line-height: 1.3 }
+.pause-card button { justify-self: start }
+.now { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: baseline; margin: 14px 0 4px }
+.now h2 { font-family: var(--f-display); font-size: 24px; margin: 0 }
+.now .meta { color: var(--muted); font-size: 14px; font-variant-numeric: tabular-nums }
+button, .btn { font: inherit; font-weight: 700; border: 0; border-radius: 8px; padding: 10px 18px; cursor: pointer; background: var(--teal); color: #fff }
+button.ghost { background: transparent; color: var(--teal); border: 1.5px solid var(--teal) }
+.pause-card button { background: #fff; color: #7a3f0b }
+button:disabled { opacity: .45; cursor: not-allowed }
+button:focus-visible, input:focus-visible, .chap:focus-visible { outline: 3px solid var(--amber); outline-offset: 2px }
+.cp { margin-top: 18px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 20px 22px; display: grid; gap: 14px }
+.cp .tag { font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--amber) }
+.cp h3 { margin: 0; font-family: var(--f-display); font-size: 21px; line-height: 1.3; text-wrap: balance }
+.cp.wait { color: var(--muted) }
+.opts { display: grid; gap: 10px }
+.opt { display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 12px; align-items: center; text-align: left; background: var(--bg); color: var(--ink); border: 1.5px solid var(--line); font-weight: 600; padding: 10px 14px }
+.opt .k { width: 34px; height: 34px; border-radius: 50%; display: grid; place-content: center; background: var(--amber); color: #fff; font-weight: 700 }
+.opt:disabled { opacity: 1; cursor: default }
+.opt.right { border-color: var(--good); background: var(--good-soft) }
+.opt.wrong { border-color: var(--bad); background: var(--bad-soft) }
+.num { display: flex; flex-wrap: wrap; gap: 10px; align-items: center }
+.num input { font: inherit; font-size: 18px; width: 9em; padding: 9px 12px; border-radius: 8px; border: 1.5px solid var(--line); background: var(--bg); color: var(--ink); font-variant-numeric: tabular-nums }
+.fb { border-radius: 8px; padding: 12px 16px; font-size: 15.5px }
+.fb.ok { background: var(--good-soft); border-left: 4px solid var(--good) }
+.fb.no { background: var(--bad-soft); border-left: 4px solid var(--bad) }
+.fb b { display: block; margin-bottom: 2px }
+aside { display: grid; gap: 18px }
+.rail { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 8px }
+.rail h4, .home h4 { margin: 8px 10px 6px; font-size: 13px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted) }
+.chap { display: grid; grid-template-columns: 28px minmax(0, 1fr) auto; gap: 10px; align-items: center; width: 100%; background: transparent; color: var(--ink); font-weight: 600; text-align: left; padding: 9px 10px; border-radius: 8px }
+.chap:hover:not(:disabled) { background: var(--teal-soft) }
+.chap.cur { background: var(--teal-soft) }
+.chap .n { width: 28px; height: 28px; border-radius: 50%; border: 1.5px solid var(--line); display: grid; place-content: center; font-size: 13px; font-variant-numeric: tabular-nums }
+.chap.done .n { background: var(--good); border-color: var(--good); color: #fff }
+.chap.cur .n { border-color: var(--teal); color: var(--teal) }
+.chap .d { color: var(--muted); font-weight: 400; font-size: 13px; font-variant-numeric: tabular-nums }
+.chap:disabled { opacity: 1; cursor: default; color: var(--muted) }
+.chap .t { min-width: 0 }
+.home { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 8px 14px 12px }
+.home label { display: grid; grid-template-columns: 20px minmax(0, 1fr); gap: 10px; padding: 6px 0; font-size: 15px; cursor: pointer }
+.home input { margin-top: 4px; accent-color: var(--teal) }
+.prog { height: 6px; border-radius: 3px; background: var(--line); overflow: hidden; margin: 4px 10px 10px }
+.prog i { display: block; height: 100%; background: var(--teal); width: 0; transition: width .3s }
+footer { margin-top: 36px; padding-top: 18px; border-top: 1px solid var(--line); color: var(--muted); font-size: 14px; display: grid; gap: 8px }
+footer a { color: var(--teal) }
+.links { display: flex; flex-wrap: wrap; gap: 8px 18px }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important } }
+</style>
+</head>
+<body>
+
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">SBS3073 Bioinformatics · Chapter 7</div>
+    <h1>Foodomics: Putting the Omics Together</h1>
+    <p class="lede">Year 3 version: eight video lessons and three hands-on data tasks, about an hour in all (21 minutes of video). Watch each part, answer its checkpoint or task, and the next one unlocks. Keep a calculator and a second browser tab (FooDB, UniProt) ready, and when a video stops on a <strong>Pause and try</strong> card, try it before you continue.</p>
+    <div class="who" id="who" hidden><span id="whoText"></span> <button type="button" class="linkish" id="resetBtn">Not you? Start again</button><span id="resetConfirm" hidden> This clears all progress on this device. <button type="button" class="linkish danger" id="resetYes">Yes, clear it</button> <button type="button" class="linkish" id="resetNo">Cancel</button></span></div>
+  </header>
+
+  <section class="reg" id="reg" hidden aria-labelledby="regTitle">
+    <h2 id="regTitle">Before you start</h2>
+    <p>Your name and matric number appear on the completion slip you submit at the end. They stay on this device only; nothing is sent anywhere.</p>
+    <form id="regForm" novalidate>
+      <label for="regName">Full name</label>
+      <input id="regName" autocomplete="name" required>
+      <label for="regMatric">Matric number</label>
+      <input id="regMatric" autocomplete="off" required>
+      <p class="err" id="regErr" hidden></p>
+      <button type="submit">Start the lecture</button>
+    </form>
+    <p class="small">Use the same device and browser for the whole lecture: progress is saved in this browser.</p>
+  </section>
+
+  <div class="grid" id="mainGrid">
+    <main>
+      <div class="stage" id="stage">
+        <video id="vid" controls playsinline preload="metadata" poster="media/seg1.jpg">
+          <source src="media/seg1.mp4" type="video/mp4">
+        </video>
+        <div class="cc" id="cc" aria-hidden="true"></div>
+        <div class="skip-note" id="skipNote" role="status" hidden></div>
+        <div class="locked-stage" id="lockedStage" hidden><strong id="lockTitle">Coming soon</strong><span id="lockText"></span></div>
+        <div class="pause-card" id="pauseCard" hidden role="dialog" aria-labelledby="pausePrompt">
+          <span class="lbl">Pause and try</span>
+          <p id="pausePrompt"></p>
+          <button id="pauseGo" type="button">I've thought about it, continue</button>
+        </div>
+      </div>
+      <div class="now"><h2 id="segTitle"></h2><span class="meta" id="segMeta"></span><button type="button" class="ghost cc-toggle" id="ccBtn" aria-pressed="true">Captions on</button></div>
+      <section class="task" id="task" hidden></section>
+      <section class="cp" id="cp" aria-live="polite"></section>
+      <section class="slip" id="slip" hidden aria-labelledby="slipTitle"></section>
+    </main>
+
+    <aside>
+      <nav class="rail" aria-label="Lecture segments">
+        <h4>Segments</h4>
+        <div class="prog" aria-hidden="true"><i id="progBar"></i></div>
+        <div id="chapters"></div>
+      </nav>
+      <div class="home">
+        <h4>Try at home</h4>
+        <label><input type="checkbox" id="h1"> <span>FooDB: which foods list tyramine?</span></label>
+        <label><input type="checkbox" id="h2"> <span>NCBI Pathogen Detection: find one Listeria SNP cluster</span></label>
+        <label><input type="checkbox" id="h3"> <span>Read a gummy-sweet label: which gelatin, and is it certified?</span></label>
+        <label><input type="checkbox" id="h4"> <span>Name three Malaysian fermented foods and their microbes</span></label>
+      </div>
+    </aside>
+  </div>
+
+  <footer>
+    <div>Script and slides by Dr. Muhamad Arif Mohamad Jamali, Bachelor of Food Biotechnology, FST, USIM. Narration uses a synthetic voice; the presenter is an illustrated character.</div>
+    <div class="links">
+      <a id="slidesLink" href="SBS3073_Lecture_7_Foodomics_async.pptx" download hidden>Download the slides (PowerPoint)</a>
+      <a href="https://foodb.ca/" target="_blank" rel="noopener">FooDB</a>
+      <a href="https://www.ncbi.nlm.nih.gov/pathogens/" target="_blank" rel="noopener">NCBI Pathogen Detection</a>
+      <a href="https://www.uniprot.org/" target="_blank" rel="noopener">UniProt</a>
+      <a href="https://hmdb.ca/" target="_blank" rel="noopener">HMDB</a>
+    </div>
+    <div>Reading: Valdés A et al. (2022) Foodomics: analytical opportunities and challenges. Anal Chem 94:366–381 (open access); SBS3073 Lecture 7 slides.</div>
+  </footer>
+</div>
+
+<script>
+const SEGMENTS = [{"title": "Foodomics as a data science", "src": "media/seg1.mp4", "poster": "media/seg1.jpg", "pauses": [{"t": 98.87, "prompt": "A student measures one durian sample five times and calls it n = 5. What is wrong with that?"}], "caps": [[0.6, 6.95, "Assalamualaikum, and welcome to Chapter 7 of SBS3073 Bioinformatics: Foodomics."], [7.27, 8.29, "I'm Dr Arif."], [8.61, 13.07, "This is the Year 3 version of the lecture, so we will go further than the classroom slides."], [13.39, 15.73, "You will analyse data, not just read about it."], [16.05, 18.78, "Keep a calculator and a second browser tab ready."], [19.53, 33.29, "Foodomics was defined by Alejandro Cifuentes in 2009 as the study of food and nutrition through the application and integration of advanced omics technologies, to improve consumers' well-being, health and confidence."], [33.61, 42.22, "A 2022 review from his group adds the idea of the foodome: the whole pool of compounds in a food, and in the body that eats it, at a given time."], [42.54, 51.05, "No single instrument sees the whole foodome, so foodomics combines layers: genomics, transcriptomics, proteomics, metabolomics and metagenomics."], [51.8, 55.46, "The most useful way to think about foodomics is as a data pipeline."], [55.78, 58.09, "It starts with a question, then a study design."], [58.41, 71.14, "Samples are collected and measured, raw data is processed into a table, statistics find the differences, features are identified, the result is interpreted biologically, and finally it is validated on new samples."], [71.46, 78.45, "Every arrow in that pipeline is a place where a study can go wrong, and most failures happen before the instrument is even switched on."], [79.2, 80.65, "Study design matters most."], [80.97, 86.03, "Biological replicates are independent samples, such as three different batches of tempeh."], [86.35, 89.78, "Technical replicates are repeated measurements of the same sample."], [90.1, 98.72, "Only biological replicates tell you whether a difference is real across batches; technical replicates only tell you how precise the instrument is."], [99.04, 103.04, "Three biological replicates per group is a minimum, and more is better."], [103.79, 105.52, "The second trap is the batch effect."], [105.84, 109.68, "Instruments drift during a run, and sequencing runs differ from day to day."], [110, 117.66, "If every control sample is measured on Monday and every treated sample on Friday, any difference you find could be the day, not the treatment."], [117.98, 128.22, "The cure is to randomise the run order, mix groups within each batch, and include a pooled quality-control sample, a mixture of all samples, injected regularly through the run."], [128.54, 131.81, "If the pooled QC samples drift, you can see it and correct it."], [132.56, 133.94, "Keep this pipeline in mind."], [134.26, 144.98, "In every layer that follows, we will ask the same questions: what is measured, how the raw data becomes a table, how we decide what is significant, and how we know an identification is right."]], "cp": {"type": "mcq", "q": "All control tempeh samples were run on Monday and all failed batches on Friday. PCA separates the two groups clearly. What is the main problem with the conclusion \"failed batches are chemically different\"?", "opts": ["PCA cannot be used on samples from fermented foods.", "Group and run day are confounded, so day may explain it.", "Five samples per group is too many for a PCA analysis.", "Failed batches should always be measured before controls."], "ans": 1, "hint": "Could anything other than the batch quality differ between the two groups?", "fb": "Group and measurement day are completely confounded: any instrument drift between Monday and Friday looks exactly like a group difference. Randomise run order, mix groups within each batch, and use pooled QC samples."}, "label": "Lesson 1 of 8", "cpTag": "Checkpoint 1", "mins": 2.4}, {"title": "Genomics and transcriptomics: from reads to differential expression", "src": "media/seg2.mp4", "poster": "media/seg2.jpg", "pauses": [{"t": 115.62, "prompt": "Why is \"one in twenty\" a problem when you run twenty thousand tests?"}], "caps": [[0.6, 8.17, "Genomics reads DNA, the layer that answers \"what is it and where did it come from?\" In food safety its sharpest use is outbreak tracing."], [8.49, 18.39, "Public-health labs sequence the whole genome of Listeria or Salmonella from patients and from foods, and count single-nucleotide differences, SNPs, between isolates."], [18.71, 27.37, "Isolates only a handful of SNPs apart are grouped into a cluster; a tight cluster linking patients to one factory is strong evidence of a common source."], [27.69, 33.49, "NCBI Pathogen Detection, from Lecture 2, does this for hundreds of thousands of isolates."], [34.24, 38.72, "Transcriptomics reads RNA, which tells you what the cells are doing right now."], [39.04, 44.67, "In RNA-seq, RNA is converted to a library and sequenced into millions of short reads."], [44.99, 52.33, "Each read is aligned to a reference genome, or rapidly matched to a list of known transcripts, and the reads are counted per gene."], [52.65, 54.48, "That count table is the raw data."], [55.23, 58.2, "Raw counts cannot be compared directly, for two reasons."], [58.52, 67.26, "A sample sequenced twice as deeply gives twice as many reads for every gene, and a long gene collects more reads than a short one with the same activity."], [67.58, 69.06, "Normalisation fixes this."], [69.38, 71.54, "Counts per million corrects for sequencing depth."], [71.86, 80.28, "Transcripts per million, TPM, corrects for both depth and gene length, so TPM values can be compared between genes and between samples."], [81.03, 82.69, "Then comes differential expression."], [83.01, 86.6, "The fold change is the ratio of expression between two conditions."], [86.92, 90.34, "Because ratios are asymmetric, we use the log to base two."], [90.66, 96.55, "A log2 fold change of 1 means doubling, 3 means eight times higher, and minus 1 means halving."], [96.87, 103.24, "A large fold change is not enough, though: we also need a statistical test across biological replicates."], [103.99, 104.94, "And here is a trap."], [105.26, 108.51, "A typical RNA-seq study tests twenty thousand genes."], [108.83, 115.47, "At a p-value cut-off of 0.05, about one thousand genes would look significant by chance alone."], [115.79, 124.76, "So we correct for multiple testing, usually with the Benjamini-Hochberg method, which controls the false discovery rate, and we report adjusted p-values."], [125.08, 132.08, "A common rule is: adjusted p below 0.05 and an absolute log2 fold change of at least 1."], [132.83, 141.57, "The volcano plot shows everything at once: log2 fold change on the horizontal axis, minus log ten of the p-value on the vertical axis."], [141.89, 146.12, "Genes in the top right are strongly up and significant, top left strongly down."], [146.44, 150.93, "Genes near the bottom are not significant, however large their fold change looks."], [151.25, 153.92, "In the next task you will make this decision yourself."]], "cp": {"type": "num", "q": "A gene has TPM 20 in unripe fruit and TPM 160 in ripe fruit. What is its log₂ fold change (ripe vs unripe)?", "unit": "", "lo": 2.9, "hi": 3.1, "hint": "First find the ratio, then ask: 2 to which power gives that ratio?", "fb": "160 / 20 = 8, and log₂ 8 = 3. The gene is eight times more active in ripe fruit."}, "label": "Lesson 2 of 8", "cpTag": "Checkpoint 2", "mins": 2.6}, {"title": "Which ripening genes are really up?", "src": "media/seg3.mp4", "poster": "media/seg3.jpg", "pauses": [], "caps": [[0.6, 1.83, "Time for your first task."], [2.15, 10.44, "The table shows RNA-seq results for nine genes in a fruit, comparing unripe and ripe flesh, with three biological replicates each."], [10.76, 15.97, "For each gene you have the mean TPM in unripe and ripe fruit and the adjusted p-value."], [16.29, 20.97, "Your job is to count how many genes are significantly upregulated in ripe fruit."], [21.29, 28.02, "Use both rules: a log2 fold change of at least 1, and an adjusted p-value below 0.05."], [28.34, 31.8, "Work out the fold change for every gene, then apply both rules."], [32.12, 35.1, "Watch out: some genes pass one rule but not the other."], [35.42, 38.65, "The table stays on the page below the video, so take your time."]], "cp": {"type": "num", "q": "How many of the nine genes are significantly upregulated in ripe fruit (log₂FC ≥ 1 and adjusted p < 0.05)?", "unit": "", "lo": 4.0, "hi": 4.0, "hint": "Calculate log₂(ripe ÷ unripe) for each gene first. A gene must pass both rules, and \"down\" does not count as up.", "fb": "PG (log₂FC 5.1), ACO1 (3.1), SPS (1.4) and AAT (4.2) pass both rules. CAB is significant but down (−2.9). PME has log₂FC 1.2 but adjusted p 0.08, so it is not significant. LOX is significant but its log₂FC is only 0.9. EXP and ACT fail both. Softening, ethylene, sugar and aroma genes switching on is exactly what ripening looks like."}, "label": "Data task A", "cpTag": "Task A", "task": "<span class=\"tag\">Task sheet</span><p class=\"small\">Illustrative data</p><table><thead><tr><th>Gene</th><th>Function</th><th>TPM unripe</th><th>TPM ripe</th><th>Adjusted p</th></tr></thead><tbody><tr><td>PG</td><td>polygalacturonase (softening)</td><td>12</td><td>410</td><td>1×10⁻⁸</td></tr><tr><td>ACO1</td><td>ACC oxidase (ethylene)</td><td>30</td><td>260</td><td>2×10⁻⁶</td></tr><tr><td>SPS</td><td>sucrose-phosphate synthase</td><td>45</td><td>120</td><td>0.003</td></tr><tr><td>EXP</td><td>expansin</td><td>80</td><td>150</td><td>0.21</td></tr><tr><td>AAT</td><td>alcohol acyltransferase (aroma)</td><td>5</td><td>95</td><td>0.0004</td></tr><tr><td>CAB</td><td>chlorophyll a/b-binding protein</td><td>300</td><td>40</td><td>1×10⁻⁵</td></tr><tr><td>ACT</td><td>actin (reference gene)</td><td>200</td><td>210</td><td>0.88</td></tr><tr><td>PME</td><td>pectin methylesterase</td><td>60</td><td>140</td><td>0.08</td></tr><tr><td>LOX</td><td>lipoxygenase</td><td>25</td><td>48</td><td>0.01</td></tr></tbody></table>", "mins": 5.7}, {"title": "Proteomics: peptides, spectra and false discoveries", "src": "media/seg4.mp4", "poster": "media/seg4.jpg", "pauses": [{"t": 32.94, "prompt": "Digest the sequence \"AGRPLKVSK\" with trypsin. Where does it cut?"}], "caps": [[0.6, 6.88, "Proteomics identifies and quantifies proteins: the enzymes, structural proteins and allergens in a food."], [7.2, 11.01, "The standard approach is bottom-up proteomics by LC-MS/MS."], [11.33, 19.3, "Proteins are extracted and digested with trypsin, the peptides are separated by liquid chromatography, and a mass spectrometer measures them."], [20.05, 22.18, "Trypsin is used because it is predictable."], [22.5, 28.05, "It cuts after lysine and arginine, K and R, except when the next amino acid is proline."], [28.37, 32.79, "So \"G-D-K-P-G\" is not cut after the K, because a proline follows."], [33.11, 40.14, "This predictability means a computer can digest any protein sequence in silico and predict exactly which peptides should appear."], [40.46, 45.52, "Sometimes trypsin misses a site, so search software usually allows one or two missed cleavages."], [46.27, 51.73, "Electrospray ionisation adds protons, so peptides carry charges, often two or three."], [52.05, 56.72, "The instrument measures mass divided by charge, m over z, not mass itself."], [57.04, 66.79, "For a peptide of neutral mass M carrying z protons, m over z equals M plus z times 1.00728, all divided by z."], [67.11, 72.73, "A 2000 dalton peptide with two charges therefore appears near m over z 1001."], [73.48, 79.22, "In tandem MS, the instrument selects one peptide ion and breaks it, usually along the backbone."], [79.54, 85.2, "The fragments form two ion series, b ions from the front of the peptide and y ions from the back."], [85.52, 92.13, "The gaps between neighbouring peaks equal the masses of individual amino acids, so the spectrum spells out the sequence."], [92.88, 98.85, "Database searching compares each spectrum with peptides predicted from a protein database such as UniProt."], [99.17, 100.65, "But some matches will be wrong."], [100.97, 109.08, "To estimate how many, the software also searches a decoy database, the same proteins with reversed sequences, which cannot be real."], [109.4, 115.28, "If decoy hits make up about one percent of accepted matches, the false discovery rate is about one percent."], [115.6, 118.17, "One percent FDR is the usual standard."], [118.92, 125.42, "For food, the key idea is the proteotypic peptide: a peptide unique to one protein, or to one species."], [125.74, 133.76, "Species-specific collagen peptides reveal whether gelatin came from pig or cow, and peptides from shrimp tropomyosin flag an allergen."], [134.08, 143.62, "Once good marker peptides are known, routine labs switch to targeted methods such as multiple reaction monitoring, which measure only those peptides, very sensitively."], [143.94, 146.77, "In the next task you will find a marker peptide yourself."]], "cp": {"type": "num", "q": "A peptide has a neutral monoisotopic mass of 1200.60 Da. At what m/z does it appear with a charge of 2+?", "unit": "", "lo": 601.2, "hi": 601.4, "hint": "Add one proton mass for each charge, then divide by the charge.", "fb": "m/z = (1200.60 + 2 × 1.00728) / 2 = 1202.61 / 2 = 601.31."}, "label": "Lesson 3 of 8", "cpTag": "Checkpoint 3", "mins": 2.5}, {"title": "Find the pig-specific peptide", "src": "media/seg5.mp4", "poster": "media/seg5.jpg", "pauses": [], "caps": [[0.6, 1.61, "Your second task."], [1.93, 6.59, "Below the video are short fragments of the same collagen protein from cow and from pig."], [6.91, 14.83, "Gelatin is made from collagen, so a peptide that exists in pig collagen but not in cow collagen could reveal pig gelatin in a sweet."], [15.15, 22.01, "First, digest both fragments with trypsin by hand: cut after K or R, but not when the next residue is proline."], [22.33, 24.43, "Write down the peptides from each species."], [24.75, 28.4, "Then compare the two lists and find the peptide that only pig produces."], [28.72, 30.64, "Choose the correct marker from the options."]], "cp": {"type": "mcq", "q": "Which peptide could serve as a pig-specific marker?", "opts": ["GDKPGEPGEK.", "PGEPGEK.", "GLPGLK.", "GMPGLK."], "ans": 3, "hint": "List all peptides for each species first. A marker must exist in pig and not in cow.", "fb": "Both fragments digest into GPSGPQGIR, GDKPGEPGEK (trypsin does not cut K–P), GPR, a six-residue peptide and the long C-terminal peptide. Only the six-residue peptide differs: cow gives GLPGLK, pig gives GMPGLK. PGEPGEK never forms, because trypsin does not cut before proline. In real work you would confirm the marker against the whole UniProt database and test it on reference gelatins."}, "label": "Data task B", "cpTag": "Task B", "task": "<span class=\"tag\">Task sheet</span><p class=\"small\">Illustrative sequences, constructed for teaching</p><div class=\"seqrow\"><b>Cow</b><code>GPSGPQGIRGDKPGEPGEKGPRGLPGLKGHNGLQGLPGLAGHHGDQGAPGAVGPAGPR</code></div><div class=\"seqrow\"><b>Pig</b><code>GPSGPQGIRGDKPGEPGEKGPRGMPGLKGHNGLQGLPGLAGHHGDQGAPGAVGPAGPR</code></div>", "mins": 5.5}, {"title": "Metabolomics: from accurate mass to a confident identification", "src": "media/seg6.mp4", "poster": "media/seg6.jpg", "pauses": [{"t": 78.23, "prompt": "A compound is seen at m/z 181.0707 as [M+H]⁺. What is its neutral mass?"}], "caps": [[0.6, 7.56, "Metabolomics measures small molecules: sugars, acids, amino acids, lipids, flavour and aroma compounds, toxins."], [7.88, 12.26, "Targeted metabolomics measures a chosen list of known compounds accurately."], [12.58, 19.96, "Untargeted metabolomics records every signal the instrument can see, thousands of features, and asks which differ between samples."], [20.28, 27.26, "Untargeted work discovers new markers, but every interesting feature then has to be identified, and that is the hard part."], [28.01, 29.89, "The instrument depends on the chemistry."], [30.21, 42.02, "GC-MS suits volatile compounds such as aroma; non-volatile compounds can be made volatile by derivatisation, and the electron-impact spectra can be matched against large libraries."], [42.34, 48.27, "LC-MS suits larger and polar compounds and is the workhorse of untargeted food metabolomics."], [48.59, 56.69, "NMR is less sensitive but non-destructive and highly reproducible, which is why it is used to screen honey and juices for adulteration."], [57.44, 61.46, "In LC-MS with electrospray, a molecule is seen as an adduct."], [61.78, 73.76, "In positive mode the most common is M plus H, the neutral mass plus one proton, 1.00728; sodium adducts and, in negative mode, M minus H are also common."], [74.08, 78.08, "So the first step is to work out the neutral mass from the measured m over z."], [78.83, 83.84, "Modern instruments measure mass very accurately, and accuracy is expressed in parts per million."], [84.16, 90.99, "The ppm error is the measured mass minus the theoretical mass, divided by the theoretical mass, times one million."], [91.31, 101.22, "A good high-resolution instrument gives errors below about 5 ppm, which is often enough to propose a molecular formula, especially when the isotope pattern also fits."], [101.97, 103.67, "But a formula is not a structure."], [103.99, 109.35, "Many different molecules share the same formula, so accurate mass alone cannot tell isomers apart."], [109.67, 118.15, "The next level of evidence is the MS/MS fragmentation spectrum, compared with spectral libraries such as MassBank or GNPS."], [118.47, 126.5, "The highest level is a match to an authentic chemical standard measured on the same instrument, with the same retention time and the same fragments."], [127.25, 130.46, "The Metabolomics Standards Initiative describes four levels."], [130.78, 134.15, "Level 1: identified, confirmed with an authentic standard."], [134.47, 138.91, "Level 2: putatively annotated, for example by a library spectrum match."], [139.23, 141.85, "Level 3: only the compound class is known."], [142.17, 143.4, "Level 4: unknown."], [143.72, 146.05, "Good papers state the level for every compound."], [146.37, 149.74, "In the next task you will identify a spoilage marker in fish."]], "cp": {"type": "mcq", "q": "An untargeted LC-MS feature in spoiled fish matches the formula C₈H₁₁NO within 2 ppm. Both tyramine and phenylethanolamine have this formula. What is needed for a Level 1 identification of tyramine?", "opts": ["A smaller ppm error on the same accurate-mass measurement.", "A second sample of spoiled fish showing the same mass.", "Matching retention time and MS/MS to a tyramine standard.", "A database search that lists tyramine as a fish compound."], "ans": 2, "hint": "What is the only evidence that separates two molecules with the same formula?", "fb": "Accurate mass gives the formula, which both isomers share. Level 1 needs an authentic tyramine standard on the same system with matching retention time and fragmentation. A library MS/MS match alone would be Level 2."}, "label": "Lesson 4 of 8", "cpTag": "Checkpoint 4", "mins": 2.5}, {"title": "Identify the spoilage marker", "src": "media/seg7.mp4", "poster": "media/seg7.jpg", "pauses": [], "caps": [[0.6, 1.56, "Your third task."], [1.88, 8.06, "Fish fillets stored warm were compared with fresh fillets by untargeted LC-MS in positive mode."], [8.38, 16.06, "One feature rose sharply during storage: m over z 138.0916, seen as M plus H."], [16.38, 22.28, "The task sheet lists five candidate spoilage compounds with their formulas and monoisotopic masses."], [22.6, 26.27, "First, find the neutral mass of the feature by removing the proton."], [26.59, 32.75, "Then decide which candidate fits, and calculate the ppm error between the measured and theoretical m over z."], [33.07, 36.34, "You can check the candidates in FooDB or HMDB."], [36.66, 39.41, "Type your ppm error, to one decimal place."]], "cp": {"type": "num", "q": "Which candidate fits, and what is the ppm error of the measured m/z against its theoretical [M+H]⁺? Type the ppm error.", "unit": "ppm", "lo": 1.5, "hi": 2.3, "hint": "ppm = (measured − theoretical) ÷ theoretical × 1,000,000. Use the theoretical [M+H]⁺, not the neutral mass.", "fb": "Neutral mass = 138.0916 − 1.00728 = 137.0843, which fits tyramine (137.0841). Theoretical [M+H]⁺ = 137.08406 + 1.00728 = 138.09134. ppm error = (138.0916 − 138.09134) / 138.09134 × 10⁶ ≈ 1.9 ppm. That is a good formula match, but remember Checkpoint 4: to call it tyramine at Level 1 you still need a standard."}, "label": "Data task C", "cpTag": "Task C", "task": "<span class=\"tag\">Task sheet</span><p class=\"small\">Measured value illustrative; masses are real monoisotopic values</p><table><thead><tr><th>Candidate</th><th>Formula</th><th>Monoisotopic mass (Da)</th></tr></thead><tbody><tr><td>Putrescine</td><td>C₄H₁₂N₂</td><td>88.1000</td></tr><tr><td>Cadaverine</td><td>C₅H₁₄N₂</td><td>102.1157</td></tr><tr><td>Histamine</td><td>C₅H₉N₃</td><td>111.0796</td></tr><tr><td>Tyramine</td><td>C₈H₁₁NO</td><td>137.0841</td></tr><tr><td>Octopamine</td><td>C₈H₁₁NO₂</td><td>153.0790</td></tr></tbody></table><p>Measured feature: <b>m/z 138.0916</b>, [M+H]⁺ (proton = 1.00728).</p>", "mins": 5.7}, {"title": "Metagenomics: who is there, and how to count them honestly", "src": "media/seg8.mp4", "poster": "media/seg8.jpg", "pauses": [{"t": 106.18, "prompt": "A microbe is 50 percent of reads in sample one and 25 percent in sample two. Can you say its numbers halved?"}], "caps": [[0.6, 9.04, "Metagenomics studies the microbial communities in food: tempeh, tempoyak, budu, tapai, and the factory surfaces where pathogens hide."], [9.36, 10.69, "There are two main approaches."], [11.44, 14.11, "Amplicon sequencing targets one marker gene."], [14.43, 22.85, "For bacteria this is the 16S ribosomal RNA gene; a variable region such as V3 to V4 is amplified and sequenced."], [23.17, 30.23, "Older pipelines clustered sequences at 97 percent similarity into OTUs, operational taxonomic units."], [30.55, 37.82, "Modern pipelines resolve exact amplicon sequence variants, ASVs, which are more precise and comparable between studies."], [38.14, 47.59, "Reads are classified against reference databases such as SILVA or GTDB, usually reliable to genus level. 16S sees only bacteria."], [47.91, 54.08, "Fungi need a different marker, the ITS region, which matters for tempeh, made by the mould Rhizopus."], [54.83, 57.49, "Shotgun metagenomics sequences all the DNA."], [57.81, 70.13, "It reaches species and sometimes strain level, detects fungi and viruses, shows functional genes such as toxin or antibiotic-resistance genes, and can even assemble whole genomes of uncultured microbes."], [70.45, 72.56, "It costs more and needs more computing."], [73.31, 74.76, "Diversity has two meanings."], [75.08, 82.79, "Alpha diversity describes one sample: richness is the number of taxa, and the Shannon index also accounts for how evenly they are spread."], [83.11, 93.46, "Beta diversity compares samples: a distance such as Bray-Curtis measures how different two communities are, and a PCoA plot displays those distances, much like PCA."], [94.21, 95.65, "Now the most important trap."], [95.97, 100.55, "Sequencing gives relative abundance, shares that always add up to one hundred percent."], [100.87, 106.03, "If one microbe grows, every other share must shrink, even if their numbers did not change."], [106.35, 109.43, "So a falling percentage does not prove a microbe declined."], [109.75, 116.69, "To know absolute numbers you need an extra measurement, such as qPCR of total bacteria or a spike-in standard."], [117.44, 118.52, "Finally, controls."], [118.84, 124.3, "DNA extraction kits and reagents carry traces of bacterial DNA, the so-called kitome."], [124.62, 129.57, "In low-biomass samples, such as a cleaned factory surface, contaminants can dominate."], [129.89, 136.71, "Always sequence a negative control, a blank taken through the whole process, and treat taxa that appear in the blank with suspicion."]], "cp": {"type": "mcq", "q": "In a tempoyak study, Lactobacillus falls from 60% to 30% of 16S reads, while qPCR shows total bacteria increased three times. What happened to the absolute amount of Lactobacillus?", "opts": ["It fell to half of its starting amount.", "It stayed exactly the same as before.", "It fell to one third of its starting amount.", "It rose to 1.5 times its starting amount."], "ans": 3, "hint": "Multiply each share by the total amount of bacteria, then compare.", "fb": "Absolute amount = share × total. Before: 0.60 × 1 = 0.60. After: 0.30 × 3 = 0.90. 0.90 / 0.60 = 1.5, so Lactobacillus actually increased; other bacteria simply grew faster. This is why relative abundance can mislead."}, "label": "Lesson 5 of 8", "cpTag": "Checkpoint 5", "mins": 2.3}, {"title": "Statistics: from a huge table to a trustworthy answer", "src": "media/seg9.mp4", "poster": "media/seg9.jpg", "pauses": [{"t": 65.94, "prompt": "Why would more features than samples make it easier to separate random groups?"}], "caps": [[0.6, 7.76, "Every omics layer ends in the same object: a table with samples in rows and features in columns, often thousands of them."], [8.08, 10.93, "Before any statistics, the table needs preprocessing."], [11.25, 24.84, "Missing values are handled, samples are normalised so that overall signal differences do not dominate, intensities are often log-transformed because they are skewed, and features are scaled so that a few very intense ones do not swamp the rest."], [25.59, 32.06, "PCA, principal component analysis, is unsupervised: it does not know which sample belongs to which group."], [32.38, 34.71, "It finds the directions of greatest variation."], [35.03, 39.85, "The scores plot shows samples; the loadings plot shows which features drive each component."], [40.17, 43.73, "If groups separate in PCA without being told, that is convincing."], [44.05, 50.18, "PCA is also the best way to spot outliers and batch effects, including drifting pooled QC samples."], [50.93, 56.05, "PLS-DA is supervised: you tell it the groups, and it finds the features that separate them."], [56.37, 57.94, "This is powerful, and dangerous."], [58.26, 65.79, "With twelve samples and two thousand features, PLS-DA can separate almost any two groups perfectly, even random ones."], [66.11, 68.82, "That is overfitting: the model memorises noise."], [69.57, 71.83, "So supervised models must be validated."], [72.15, 77.18, "R squared shows how well the model fits the data it was built on; it is almost always high."], [77.5, 84.43, "Q squared comes from cross-validation: the model is rebuilt repeatedly with some samples left out, and asked to predict them."], [84.75, 88.44, "A large gap between R squared and Q squared signals overfitting."], [88.76, 97.9, "A permutation test goes further: the group labels are shuffled many times, and if shuffled models perform as well as the real one, the separation means nothing."], [98.65, 107.84, "Heatmaps with hierarchical clustering show the selected features across samples as blocks of colour, which helps you see patterns and groups of features that behave together."], [108.59, 112.89, "The final check is the one most often skipped: an independent validation set."], [113.21, 119.13, "Build the model on one set of samples, then test it on new samples from a different batch, season or supplier."], [119.45, 125.28, "A honey authenticity model that only works on the honeys it was trained on is not a test; it is a description."]], "cp": {"type": "mcq", "q": "A PLS-DA model separates authentic and adulterated honey with R² = 0.99 but cross-validated Q² = 0.05, and permuted labels give similar models. What should you conclude?", "opts": ["The model is overfitted and cannot predict new samples.", "The model is excellent, because R² is very close to one.", "Honey adulteration cannot be detected by any omics method.", "Q² is low because the honey samples were scaled before use."], "ans": 0, "hint": "Which number tells you how well the model predicts samples it has not seen?", "fb": "R² only measures fit to the training data. A Q² near zero and a failed permutation test mean the separation is noise memorised by the model. More samples, fewer features, or a targeted method are needed, followed by independent validation."}, "label": "Lesson 6 of 8", "cpTag": "Checkpoint 6", "mins": 2.1}, {"title": "Halal authentication: choosing, measuring and defending a result", "src": "media/seg10.mp4", "poster": "media/seg10.jpg", "pauses": [{"t": 57.5, "prompt": "Why is a positive control alone not enough to trust a positive result?"}], "caps": [[0.6, 5.45, "Halal authentication is a USIM question, and it brings together everything so far."], [5.77, 22.53, "As slide 9 of Lecture 7 shows, the right layer depends on the food: DNA for meat products, species-specific peptides for gelatin and heavily processed foods, fatty-acid and lipid profiles for fats, oils and shortening, and microbial communities for fermented products."], [22.85, 27.93, "A good laboratory chooses the layer that survives the processing, and confirms with a second one."], [28.68, 32.04, "For DNA, routine labs use real-time PCR."], [32.36, 43.71, "The cycle at which fluorescence crosses a threshold is the Ct value: the more target DNA, the earlier it crosses, so a low Ct means a lot of target and a high Ct means very little."], [44.03, 53.75, "Every run includes a positive control, which proves the reaction works, and a no-template control, water instead of DNA, which proves there is no contamination."], [54.07, 57.35, "If the no-template control amplifies, the run is invalid."], [58.1, 59.85, "Processing complicates DNA."], [60.17, 66.05, "Heat and acid fragment it, so labs use short amplicons, often under about 150 base pairs."], [66.37, 70.87, "Each method has a limit of detection, the smallest amount it can reliably detect."], [71.19, 77.7, "A negative result only means \"below the limit of detection\", not \"absent\", and that limit must be stated in the report."], [78.45, 86.45, "For gelatin, long heating and acid or alkali treatment destroy most of the DNA, so a negative PCR is weak evidence."], [86.77, 94.6, "Collagen marker peptides survive, and targeted LC-MS/MS can detect pig or cow peptides, as you found in Task B."], [94.92, 109.65, "For fats and shortening there is almost no DNA or protein, so the lipid layer is used: lard has a characteristic pattern of fatty acids and triacylglycerols, detected by GC or LC-MS, often screened by spectroscopy first."], [110.4, 116.94, "Finally, a halal result can affect a company, a certification and the trust of consumers, so it must be defensible."], [117.26, 128.57, "That means validated methods, reference materials of known origin, documented controls, a stated limit of detection, and, when the stakes are high, confirmation by a second, independent layer."]], "cp": {"type": "mcq", "q": "A pig qPCR test on a sausage gives Ct 36 for the sample and Ct 37 for the no-template control. The positive control is normal. What should the lab conclude?", "opts": ["The sausage contains a small amount of pork.", "The run is invalid because the blank amplified.", "The sausage is halal, because Ct 36 is very late.", "The positive control proves the result is reliable."], "ans": 1, "hint": "What is the no-template control supposed to show?", "fb": "The no-template control should never amplify. A blank at Ct 37, almost the same as the sample, means contamination; the sample result cannot be interpreted. Clean, repeat the run, and only then report."}, "label": "Lesson 7 of 8", "cpTag": "Checkpoint 7", "mins": 2.2}, {"title": "Integration, open data and the limits of foodomics", "src": "media/seg11.mp4", "poster": "media/seg11.jpg", "pauses": [{"t": 53.6, "prompt": "Give one reason two layers agreeing is stronger evidence than one layer measured twice."}], "caps": [[0.6, 3.02, "The real power of foodomics comes from integration."], [3.34, 7.37, "Take one question: will people allergic to shrimp react to a new crab snack?"], [7.69, 10.01, "The genome gives the crab tropomyosin gene."], [10.33, 19.34, "The protein sequence is compared with shrimp Pen a 1 by BLAST and checked against the Codex rule of 35 percent identity over 80 amino acids."], [19.66, 22.52, "A tropomyosin tree places crab right beside shrimp."], [22.84, 26.18, "A structural model shows the coiled coil where antibodies bind."], [26.5, 30.64, "And proteomics on the actual snack shows whether the protein survived processing."], [30.96, 33.96, "Each layer alone is a clue; together they are evidence."], [34.71, 36.82, "Integration can also be data-driven."], [37.14, 47.08, "Features from different layers can be correlated, a ripening gene with its enzyme and with the aroma compound that enzyme makes, and mapped onto pathways in databases such as KEGG."], [47.4, 53.45, "Agreement across layers makes a conclusion far stronger than any single layer, because each layer has different errors."], [54.2, 57.08, "Foodomics also connects food with the person who eats it."], [57.4, 66.37, "Nutrigenetics asks how a person's genes change their response to food; lactase persistence is the classic example, and you met lactase in Lecture 6."], [66.69, 72.52, "Nutrigenomics asks how food changes the activity of a person's genes, measured with transcriptomics."], [72.84, 81.25, "These ideas underlie personalised nutrition, a promising field where much of the evidence is still early, so commercial claims deserve scepticism."], [82, 83.86, "Good omics science is open science."], [84.18, 89.15, "The FAIR principles say data should be findable, accessible, interoperable and reusable."], [89.47, 96.56, "Raw sequencing reads go to the Sequence Read Archive, proteomics data to PRIDE, metabolomics data to MetaboLights."], [96.88, 102.96, "Depositing raw data lets others check your analysis, reanalyse it with better tools, and combine studies."], [103.71, 104.98, "And foodomics has limits."], [105.3, 117.28, "Reference databases are built mostly from foods studied in Europe, North America and East Asia, so durian, budu, tempoyak and many Malaysian herbs and microbes are poorly covered and give more unknowns."], [117.6, 119.49, "Instruments and expertise are expensive."], [119.81, 124.36, "Different labs can give different numbers without agreed methods and reference materials."], [124.68, 128.55, "And joining layers measured in different units remains a research problem."], [129.3, 134.31, "That is the ladder, from DNA to microbes, and the habits that make the answers trustworthy."], [134.63, 143.03, "In Chapter 8, molecular simulation, we put the molecules in motion: how a spoilage molecule fits an enzyme, and how heat moves a protein."]], "cp": {"type": "mcq", "q": "Why should raw omics data be deposited in repositories such as SRA, PRIDE or MetaboLights?", "opts": ["Journals require it only so that files are stored somewhere safe.", "Others can check, reanalyse and combine the data with new tools.", "Repositories turn raw data into finished results automatically.", "Depositing the data removes the need for any biological replicates."], "ans": 1, "hint": "Think about what another scientist could do with your raw files.", "fb": "Open raw data makes results checkable and reusable: others can repeat the analysis, apply better methods later, or combine studies. These are the FAIR principles: findable, accessible, interoperable, reusable."}, "label": "Lesson 8 of 8", "cpTag": "Checkpoint 8", "mins": 2.4}, {"title": "Closing and exit ticket", "src": "media/seg12.mp4", "poster": "media/seg12.jpg", "pauses": [], "caps": [[0.6, 1.22, "Well done."], [1.54, 5.92, "You have worked through every layer of the ladder and analysed real-style data on the way."], [6.24, 8.21, "Three last questions, one try each."], [8.53, 12.3, "Then take a screenshot of your whole completion slip and upload it on GOALS."], [12.62, 13.73, "See you in Chapter 8."]], "cp": {"type": "exit", "q": "Exit ticket: three questions to finish", "items": [{"type": "mcq", "q": "A food company wants to know why Musang King and D24 durians smell different. Which approach should it try first?", "opts": ["16S amplicon sequencing of the durian flesh.", "Untargeted GC-MS of the volatile compounds.", "Whole-genome sequencing of one tree of each type.", "Bottom-up proteomics of the durian husk tissue."], "ans": 1, "fb": "Aroma is made of volatile compounds, so untargeted GC-MS profiling is the direct first step. Transcriptomics or genomics can later explain why the profiles differ."}, {"type": "mcq", "q": "A proteomics study reports peptide identifications at 1% FDR. What does this mean?", "opts": ["Exactly 1% of the proteins in the sample were detected.", "About 1 in 100 accepted matches is expected to be false.", "The instrument measured every peptide mass within 1%.", "The protein database contained 1% decoy sequences only."], "ans": 1, "fb": "The false discovery rate, estimated with decoy sequences, is the expected share of wrong matches among the accepted identifications."}, {"type": "mcq", "q": "What is the difference between alpha and beta diversity?", "opts": ["Alpha is for bacteria and beta is for fungi in the sample.", "Alpha uses 16S sequencing and beta uses shotgun sequencing.", "Alpha describes one sample; beta compares samples.", "Alpha counts the reads and beta counts the genes in a sample."], "ans": 2, "fb": "Alpha diversity (richness, Shannon) describes the community within one sample; beta diversity (e.g. Bray–Curtis) measures how different two samples' communities are."}]}, "label": "Closing", "mins": 0.2}];
+const KEY = "sbs3073-foodomics-a261-v1";
+let state = { done: [], home: {} };
+try { const s = JSON.parse(localStorage.getItem(KEY) || "null"); if (s && Array.isArray(s.done)) state = Object.assign(state, s); } catch (e) {}
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} };
+
+const $ = (id) => document.getElementById(id);
+const vid = $("vid");
+let cur = 0, handled = new Set(), ended = false, tries = 0, maxT = 0, snapping = false, noteTimer = 0;
+if (!state.watched || typeof state.watched !== "object") state.watched = {};
+if (!state.res || typeof state.res !== "object") state.res = {};
+
+function unlocked(i) { return i === 0 || state.done.includes(i - 1); }
+function renderRail() {
+  const box = $("chapters"); box.innerHTML = "";
+  SEGMENTS.forEach((s, i) => {
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "chap" + (i === cur ? " cur" : "") + (state.done.includes(i) ? " done" : "");
+    const open = unlocked(i) && s.src;
+    b.disabled = !open;
+    b.innerHTML = `<span class="n">${state.done.includes(i) ? "✓" : i === SEGMENTS.length - 1 ? "★" : i + 1}</span><span class="t"></span><span class="d">${open ? s.mins.toFixed(1) + " min" : "locked"}</span>`;
+    b.querySelector(".t").textContent = s.title;
+    b.addEventListener("click", () => load(i));
+    box.appendChild(b);
+  });
+  const n = state.done.filter((i) => i < SEGMENTS.length).length;
+  $("progBar").style.width = (100 * n / SEGMENTS.length) + "%";
+}
+
+function load(i) {
+  cur = i; handled = new Set(); ended = false; tries = 0; maxT = state.watched[i] || 0; $("skipNote").hidden = true;
+  const s = SEGMENTS[i];
+  $("segTitle").textContent = i === SEGMENTS.length - 1 ? s.title : `${s.label.replace(/ of 8$/, "")}: ${s.title}`;
+  $("segMeta").textContent = (s.label || (i === SEGMENTS.length - 1 ? "Closing" : `Segment ${i + 1} of ${SEGMENTS.length - 1}`)) + ` · about ${s.mins.toFixed(1)} min`;
+  $("task").hidden = !s.task; $("task").innerHTML = s.task || "";
+  $("pauseCard").hidden = true;
+  if (s.src) {
+    $("lockedStage").hidden = true; vid.hidden = false;
+    if (!vid.currentSrc.endsWith(s.src)) { vid.poster = s.poster; vid.querySelector("source").src = s.src; vid.load(); }
+  } else {
+    vid.pause(); vid.hidden = true; $("lockedStage").hidden = false;
+    $("lockTitle").textContent = "Video unavailable";
+    $("lockText").textContent = "Reload the page to try again.";
+  }
+  renderCP(); renderRail(); renderSlip();
+}
+
+function renderCP() {
+  const s = SEGMENTS[cur], box = $("cp");
+  box.className = "cp"; box.innerHTML = "";
+  if (!s.cp) { box.classList.add("wait"); box.textContent = "No checkpoint for this segment."; return; }
+  if (!ended && !state.done.includes(cur) && !(state.watched[cur] >= 1e9)) {
+    box.classList.add("wait");
+    box.innerHTML = `<span class="tag">${s.cp.type === "exit" ? "Exit ticket" : (s.cpTag || "Checkpoint " + (cur + 1))}</span><div>${s.cp.type === "exit" ? "The exit ticket" : (s.task ? "The task answer box" : "The checkpoint")} opens when the video ends. You can rewatch any part first.</div>`;
+    return;
+  }
+  if (s.cp.type === "exit") { renderExit(box, s.cp); return; }
+  const tag = document.createElement("span"); tag.className = "tag"; tag.textContent = s.cpTag || `Checkpoint ${cur + 1}`;
+  const h = document.createElement("h3"); h.textContent = s.cp.q;
+  const fb = document.createElement("div"); fb.id = "fb";
+  box.append(tag, h);
+  if (s.cp.type === "mcq") {
+    const opts = document.createElement("div"); opts.className = "opts";
+    s.cp.opts.forEach((o, k) => {
+      const b = document.createElement("button"); b.type = "button"; b.className = "opt"; b.id = `opt${k}`;
+      b.innerHTML = `<span class="k">${"ABCD"[k]}</span><span></span>`; b.lastChild.textContent = o;
+      b.addEventListener("click", () => answer(k === s.cp.ans, b, opts));
+      opts.appendChild(b);
+    });
+    box.appendChild(opts);
+  } else {
+    const row = document.createElement("div"); row.className = "num";
+    row.innerHTML = `<input id="numIn" inputmode="decimal" aria-label="Your answer"> <span>${s.cp.unit || ""}</span> <button type="button" id="numGo">Check</button>`;
+    box.appendChild(row);
+    row.querySelector("#numGo").addEventListener("click", () => {
+      const v = parseFloat(row.querySelector("#numIn").value.replace(",", ".").replace("−", "-"));
+      if (isNaN(v)) { $("fb").className = "fb no"; $("fb").innerHTML = "<b>Type a number first.</b>"; return; }
+      answer(v >= s.cp.lo && v <= s.cp.hi, null, null);
+    });
+  }
+  box.appendChild(fb);
+  if (state.done.includes(cur)) showResult(true, true);
+}
+
+function answer(ok, btn, opts) {
+  const s = SEGMENTS[cur];
+  tries++;
+  if (btn) btn.classList.add(ok ? "right" : "wrong");
+  if (ok || tries >= 2) {
+    if (!state.res[cur]) state.res[cur] = { ok: ok, first: ok && tries === 1 };
+    if (opts) { opts.querySelectorAll(".opt").forEach((b) => b.disabled = true); $("opt" + s.cp.ans).classList.add("right"); }
+    showResult(ok, false);
+    if (!state.done.includes(cur)) { state.done.push(cur); save(); }
+    renderRail();
+  } else {
+    $("fb").className = "fb no"; $("fb").innerHTML = `<b>Not quite. One more try.</b>`; $("fb").append(s.cp.hint);
+    if (btn) btn.disabled = true;
+  }
+}
+function showResult(ok, revisit) {
+  const s = SEGMENTS[cur], fb = $("fb");
+  fb.className = "fb " + (ok ? "ok" : "no");
+  fb.innerHTML = `<b>${revisit ? "Answered. Here is the explanation again." : ok ? "Correct." : "Here is the answer."}</b>`;
+  fb.append(s.cp.fb);
+  const next = SEGMENTS[cur + 1];
+  if (next) {
+    const b = document.createElement("button"); b.type = "button"; b.style.marginTop = "12px"; b.style.display = "block";
+    b.textContent = cur + 1 === SEGMENTS.length - 1 ? "Continue to the closing clip" : `Continue to ${SEGMENTS[cur + 1].label.replace(/ of 8$/, "")}`;
+    b.addEventListener("click", () => { load(cur + 1); window.scrollTo({ top: 0, behavior: "smooth" }); });
+    fb.appendChild(b);
+  }
+}
+
+function renderExit(box, cp) {
+  const tag = document.createElement("span"); tag.className = "tag"; tag.textContent = "Exit ticket";
+  const h = document.createElement("h3"); h.textContent = "Three questions to finish. One try each.";
+  box.append(tag, h);
+  const res = (state.exit && state.exit.length === cp.items.length) ? state.exit.slice() : new Array(cp.items.length).fill(null);
+  const scoreBox = document.createElement("div");
+  const finish = () => {
+    if (res.some((r) => r === null)) return;
+    const n = res.filter(Boolean).length;
+    scoreBox.className = "fb " + (n === res.length ? "ok" : "no");
+    scoreBox.innerHTML = `<b>You scored ${n} out of ${res.length}.</b>`;
+    scoreBox.append(n === res.length ? "Well done. That is the end of the Foodomics lecture; next is Chapter 8, Molecular Simulation." : "Read the explanations above, then rewatch the segment that covers any question you missed. Next is Chapter 8, Molecular Simulation.");
+    state.exit = res.slice(); if (!state.done.includes(cur)) state.done.push(cur);
+    if (!state.completedAt) state.completedAt = new Date().toISOString();
+    save(); renderRail(); renderSlip();
+  };
+  cp.items.forEach((it, i) => {
+    const wrap = document.createElement("div"); wrap.style.display = "grid"; wrap.style.gap = "10px";
+    const q = document.createElement("div"); q.style.fontWeight = "600"; q.textContent = `${i + 1}. ${it.q}`;
+    const fb = document.createElement("div");
+    const show = (ok) => { res[i] = ok; fb.className = "fb " + (ok ? "ok" : "no"); fb.innerHTML = `<b>${ok ? "Correct." : "Here is the answer."}</b>`; fb.append(it.fb); finish(); };
+    wrap.append(q);
+    if (it.type === "mcq") {
+      const opts = document.createElement("div"); opts.className = "opts";
+      it.opts.forEach((o, k) => {
+        const b = document.createElement("button"); b.type = "button"; b.className = "opt";
+        b.innerHTML = `<span class="k">${"ABCD"[k]}</span><span></span>`; b.lastChild.textContent = o;
+        b.addEventListener("click", () => { opts.querySelectorAll(".opt").forEach((x, j) => { x.disabled = true; if (j === it.ans) x.classList.add("right"); }); if (k !== it.ans) b.classList.add("wrong"); show(k === it.ans); });
+        opts.appendChild(b);
+      });
+      wrap.append(opts);
+    } else {
+      const row = document.createElement("div"); row.className = "num";
+      row.innerHTML = `<input id="exit${i}" inputmode="decimal" aria-label="Your answer to question ${i + 1}"> <span>${it.unit}</span> <button type="button">Check</button>`;
+      row.querySelector("button").addEventListener("click", () => {
+        const v = parseFloat(row.querySelector("input").value.replace(",", ".").replace("−", "-"));
+        if (isNaN(v)) { fb.className = "fb no"; fb.innerHTML = "<b>Type a number first.</b>"; return; }
+        row.querySelector("input").disabled = true; row.querySelector("button").disabled = true;
+        show(v >= it.lo && v <= it.hi);
+      });
+      wrap.append(row);
+    }
+    wrap.append(fb); box.append(wrap);
+    if (res[i] !== null) { fb.className = "fb " + (res[i] ? "ok" : "no"); fb.innerHTML = `<b>${res[i] ? "Correct." : "Here is the answer."}</b>`; fb.append(it.fb); wrap.querySelectorAll("button, input").forEach((x) => x.disabled = true); }
+  });
+  box.append(scoreBox); finish();
+}
+
+// Skip-ahead guard: on a first watch the student can rewind but not jump past the furthest point reached.
+const free = () => state.done.includes(cur);
+function note(msg) {
+  const n = $("skipNote"); n.textContent = msg; n.hidden = false;
+  clearTimeout(noteTimer); noteTimer = setTimeout(() => { n.hidden = true; }, 4500);
+}
+vid.addEventListener("loadedmetadata", () => {
+  if (!free() && maxT > 3 && maxT < 1e9 && maxT < vid.duration - 3) { snapping = true; vid.currentTime = Math.max(0, maxT - 2); note("Resuming where you stopped last time."); }
+});
+vid.addEventListener("seeking", () => {
+  if (snapping) { snapping = false; return; }
+  if (free()) return;
+  if (vid.currentTime > maxT + 1) {
+    snapping = true; vid.currentTime = maxT;
+    note("Skipping ahead is off until you have watched this video once. You can rewind any time.");
+  }
+});
+vid.addEventListener("ratechange", () => { if (vid.playbackRate > 2) vid.playbackRate = 2; });
+vid.addEventListener("timeupdate", () => {
+  const s = SEGMENTS[cur];
+  if (!vid.seeking && vid.currentTime > maxT && vid.currentTime - maxT < 2.5) {
+    maxT = vid.currentTime;
+    if (Math.floor(maxT) % 5 === 0) { state.watched[cur] = maxT; save(); }
+  }
+  if (!s.pauses) return;
+  for (const p of s.pauses) {
+    if (!handled.has(p.t) && vid.currentTime >= p.t && vid.currentTime < p.t + 1.5) {
+      handled.add(p.t); vid.pause();
+      $("pausePrompt").textContent = p.prompt; $("pauseCard").hidden = false; $("pauseGo").focus();
+    }
+  }
+});
+let ccOn = true;
+function drawCC() {
+  const s = SEGMENTS[cur], t = vid.currentTime, box = $("cc");
+  const c = ccOn && s.caps ? s.caps.find((q) => t >= q[0] && t < q[1]) : null;
+  const txt = c ? c[2] : "";
+  if (box.dataset.t !== txt) { box.dataset.t = txt; box.innerHTML = txt ? "<span></span>" : ""; if (txt) box.firstChild.textContent = txt; }
+}
+vid.addEventListener("timeupdate", drawCC);
+vid.addEventListener("seeked", drawCC);
+$("ccBtn").addEventListener("click", () => { ccOn = !ccOn; $("ccBtn").textContent = ccOn ? "Captions on" : "Captions off"; $("ccBtn").setAttribute("aria-pressed", String(ccOn)); drawCC(); });
+vid.addEventListener("seeked", () => { if (!free()) return; const s = SEGMENTS[cur]; (s.pauses || []).forEach((p) => { if (vid.currentTime > p.t + 1.5) handled.add(p.t); }); });
+vid.addEventListener("play", () => { $("pauseCard").hidden = true; });
+$("pauseGo").addEventListener("click", () => { $("pauseCard").hidden = true; vid.play().catch(() => {}); });
+vid.addEventListener("ended", () => {
+  if (!free() && maxT < vid.duration - 3) return;
+  state.watched[cur] = 1e9; save(); ended = true; renderCP(); $("cp").scrollIntoView({ behavior: "smooth", block: "start" }); });
+
+["h1", "h2", "h3", "h4"].forEach((id) => {
+  const el = $(id); el.checked = !!state.home[id];
+  el.addEventListener("change", () => { state.home[id] = el.checked; save(); });
+});
+function myDay(iso) { return new Date(iso).toLocaleDateString("en-CA", { timeZone: "Asia/Kuala_Lumpur" }); }
+function myTime(iso) { return new Date(iso).toLocaleTimeString("en-GB", { timeZone: "Asia/Kuala_Lumpur", hour: "2-digit", minute: "2-digit" }); }
+function tally(st) {
+  let ok = 0, first = 0;
+  for (let i = 0; i < SEGMENTS.length - 1; i++) { const r = st.res[i]; if (r) { if (r.ok) ok++; if (r.first) first++; } }
+  return { ok, first, exit: (st.exit || []).filter(Boolean).length };
+}
+// Check code: a short hash of the slip details so a typed-over screenshot is easy to spot (see verify.html).
+function checkCode(name, matric, ok, first, exit, day) {
+  const str = ["SBS3073-FOODOMICS-A261", name.trim().toUpperCase().replace(/\s+/g, " "), matric.trim().toUpperCase().replace(/\s+/g, ""), ok, first, exit, day].join("|");
+  let h1 = 2166136261 >>> 0, h2 = 0x9e3779b9 >>> 0;
+  for (const ch of str) { const c = ch.codePointAt(0); h1 = Math.imul(h1 ^ c, 16777619) >>> 0; h2 = Math.imul(h2 ^ c, 2246822507) >>> 0; h2 = (h2 ^ (h2 >>> 13)) >>> 0; }
+  const A = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; let out = "";
+  for (let i = 0; i < 4; i++) { out += A.charAt(h1 & 31); h1 >>>= 5; }
+  for (let i = 0; i < 4; i++) { out += A.charAt(h2 & 31); h2 >>>= 5; }
+  return out.slice(0, 4) + "-" + out.slice(4);
+}
+function renderSlip() {
+  const box = $("slip");
+  if (!state.completedAt || !state.student || cur !== SEGMENTS.length - 1) { box.hidden = true; return; }
+  const t = tally(state), day = myDay(state.completedAt);
+  box.innerHTML = `<span class="course">SBS3073 Bioinformatics · A261</span><h3 id="slipTitle">Completion slip: Foodomics</h3>
+    <dl><dt>Name</dt><dd id="sName"></dd><dt>Matric number</dt><dd id="sMatric"></dd>
+    <dt>Completed</dt><dd>${day}, ${myTime(state.completedAt)} (Malaysia time)</dd>
+    <dt>Videos watched</dt><dd>${SEGMENTS.length} of ${SEGMENTS.length}</dd>
+    <dt>Checkpoints correct</dt><dd>${t.ok} of ${SEGMENTS.length - 1} (${t.first} on the first try)</dd>
+    <dt>Exit ticket</dt><dd>${t.exit} of 3</dd>
+    <dt>Check code</dt><dd class="code">${checkCode(state.student.name, state.student.matric, t.ok, t.first, t.exit, day)}</dd></dl>
+    <div class="how">Take a screenshot of this whole slip and submit it as Dr Arif instructs. Do not edit it: the check code is tied to the details above.</div>`;
+  $("sName").textContent = state.student.name; $("sMatric").textContent = state.student.matric;
+  box.hidden = false;
+}
+function showWho() {
+  $("who").hidden = !state.student;
+  if (state.student) $("whoText").textContent = `Signed in on this device as ${state.student.name} (${state.student.matric}).`;
+}
+$("regForm").addEventListener("submit", (e) => {
+  e.preventDefault();
+  const name = $("regName").value.trim().replace(/\s+/g, " "), matric = $("regMatric").value.trim().replace(/\s+/g, "").toUpperCase();
+  if (name.length < 3 || !/[a-z]/i.test(name)) { $("regErr").textContent = "Enter your full name."; $("regErr").hidden = false; return; }
+  if (!/^[A-Z0-9\/-]{4,20}$/.test(matric)) { $("regErr").textContent = "Enter your matric number (letters and digits only)."; $("regErr").hidden = false; return; }
+  state.student = { name, matric }; save();
+  $("reg").hidden = true; $("mainGrid").hidden = false; showWho(); load(0);
+});
+$("resetBtn").addEventListener("click", () => { $("resetConfirm").hidden = false; $("resetBtn").hidden = true; });
+$("resetNo").addEventListener("click", () => { $("resetConfirm").hidden = true; $("resetBtn").hidden = false; });
+$("resetYes").addEventListener("click", () => { try { localStorage.removeItem(KEY); } catch (e) {} location.reload(); });
+if (/github\.io$/.test(location.hostname)) $("slidesLink").hidden = false;
+
+if (!state.student) { $("reg").hidden = false; $("mainGrid").hidden = true; }
+showWho();
+// open the furthest unlocked segment
+let start = 0; while (start < SEGMENTS.length - 1 && state.done.includes(start)) start++;
+load(start);
+</script>
+
+</body>
+</html>
