@@ -2,9 +2,10 @@
 
 An interactive, self-paced video lecture for SBS3073 Bioinformatics (Bachelor of Food Biotechnology, USIM, A261).
 
-- `index.html` — the lecture: 10 short videos and a closing clip (about 20 minutes), a checkpoint after each video,
-  "Pause and try" cards, an exit ticket and a completion slip with a check code. Progress is saved only in the
-  student's own browser; nothing is sent anywhere.
+- `index.html` — the lecture (Year 3 version): eight video lessons and three hands-on data tasks, about an hour of
+  student time (about 21 minutes of video). Each part has a checkpoint or task, with "Pause and try" cards, an exit
+  ticket and a completion slip with a check code. Progress is saved only in the student's own browser; nothing is
+  sent anywhere.
 - `verify.html` — for the lecturer: re-checks the code on a student's completion slip.
 - `media/` — segment videos (`segN.mp4`) and poster images (`segN.jpg`).
 
